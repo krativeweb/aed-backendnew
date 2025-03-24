@@ -47,16 +47,16 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.cookie("token", "", {
+  res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",
-    expires: new Date(0), // Expire the cookie immediately
     path: "/",
   });
 
-  res.json({ message: "Logged out successfully" });
+  res.status(200).json({ message: "Logged out successfully" });
 });
+
 
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
