@@ -2,11 +2,10 @@ const express = require("express");
 const AED = require("../models/aedModel");
 const { upload } = require("../config/cloudinary");
 const cors = require("cors");
-
+const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 
-// Enable CORS
-router.use(cors());
+
 
 // 🔹 Register AED (No Authentication)
 router.post("/register-aed", upload.single("aedImage"), async (req, res) => {
@@ -38,9 +37,9 @@ router.post("/register-aed", upload.single("aedImage"), async (req, res) => {
 
 
 // 🔹 Get All AEDs (No Authentication)
-router.get("/aed-list", async (req, res) => {
+router.get("/aed-list",protect, async (req, res) => {
   try {
-    const aeds = await AED.find();
+   const aeds = await AED.find({ isDeleted: false }).sort({ createdAt: -1 });
     res.status(200).json(aeds);
   } catch (error) {
     res.status(500).json({ message: "❌ Error fetching AED data", details: error.message });
@@ -62,6 +61,7 @@ router.post("/fetchnearby", async (req, res) => {
           distanceField: "distance",
           maxDistance: 500 * 1000, // 200KM in meters
           spherical: true,
+           query: { isDeleted: false } 
         },
       },
     ]);
@@ -71,6 +71,25 @@ router.post("/fetchnearby", async (req, res) => {
   } catch (error) {
     console.error("Error fetching nearby AEDs:", error);
     res.status(500).json({ error: "Server error" });
+  }
+});
+// DELETE: Remove AED by ID
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const aed = await AED.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true, deletedAt: new Date() },
+      { new: true }
+    );
+
+    if (!aed) {
+      return res.status(404).json({ message: "AED record not found" });
+    }
+
+    res.status(200).json({ message: "AED record soft deleted successfully" });
+  } catch (error) {
+    console.error("Error soft deleting AED:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

@@ -30,9 +30,11 @@ const aedSchema = new mongoose.Schema(
     emergencySupplies: [String],
     aedImage: String,
     location: {
-      type: { type: String, enum: ["Point"], required: true, default: "Point" },
-      coordinates: { type: [Number], required: true }, // [longitude, latitude]
+      type: { type: String, enum: ["Point"],  default: "Point" },
+      coordinates: { type: [Number] }, // [longitude, latitude]
     },
+      isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
