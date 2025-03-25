@@ -37,7 +37,7 @@ router.post("/register-aed", upload.single("aedImage"), async (req, res) => {
 
 
 // 🔹 Get All AEDs (No Authentication)
-router.get("/aed-list",protect, async (req, res) => {
+router.get("/aed-list", async (req, res) => {
   try {
    const aeds = await AED.find({ isDeleted: false }).sort({ createdAt: -1 });
     res.status(200).json(aeds);
