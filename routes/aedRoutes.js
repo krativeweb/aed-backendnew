@@ -74,7 +74,7 @@ router.post("/fetchnearby", async (req, res) => {
   }
 });
 // DELETE: Remove AED by ID
-router.delete("/:id", protect, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const aed = await AED.findByIdAndUpdate(
       req.params.id,
