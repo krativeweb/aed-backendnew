@@ -59,7 +59,7 @@ router.post("/fetchnearby", async (req, res) => {
         $geoNear: {
           near: { type: "Point", coordinates: [longitude, latitude] },
           distanceField: "distance",
-          maxDistance: 500 * 1000, // 200KM in meters
+          maxDistance: 200 * 1000, // 200KM in meters
           spherical: true,
            query: { isDeleted: false } 
         },
