@@ -27,7 +27,7 @@ router.post("/login", async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true, // Prevent JavaScript access (XSS protection)
         secure: process.env.NODE_ENV === "production", // Use Secure flag in production (HTTPS)
-        sameSite: "Strict", // Prevent CSRF attacks
+        sameSite: "None", // Prevent CSRF attacks
         path: "/", // Available for all requests
         maxAge: 30 * 24 * 60 * 60 * 1000, // Expire in 30 days
       });
