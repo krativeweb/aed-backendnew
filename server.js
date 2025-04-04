@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(
   cors({
     // origin: "https://aed-ner-aceu.vercel.app", // ✅ Allow frontend
-     origin:  "*",
+     origin:  "https://aed-ner-aceu.vercel.app",
     credentials: true, // ✅ Allow cookies
     methods: ["GET", "POST", "PUT", "DELETE"], // ✅ Allowed request methods
     allowedHeaders: ["Content-Type", "Authorization"], // ✅ Allowed headers
