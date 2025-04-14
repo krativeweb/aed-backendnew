@@ -46,6 +46,20 @@ router.get("/aed-list", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const aed = await AED.findOne({ _id: req.params.id, isDeleted: false });
+    if (!aed) {
+      return res.status(404).json({ message: "❌ AED not found" });
+    }
+    res.status(200).json(aed);
+  } catch (error) {
+    console.error("Error fetching AED:", error);
+    res.status(500).json({ message: "❌ Error fetching AED", details: error.message });
+  }
+});
+
+
 router.post("/fetchnearby", async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
