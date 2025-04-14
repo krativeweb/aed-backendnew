@@ -40,6 +40,7 @@ router.put("/:id", upload.single("aedImage"), async (req, res) => {
   try {
     let updateData = { ...req.body, aedImage: req.file?.path || req.body.aedImage };
 
+    // Handle location
     if (req.body.location) {
       const location = JSON.parse(req.body.location);
       if (location.type === "Point" && Array.isArray(location.coordinates)) {
@@ -49,9 +50,24 @@ router.put("/:id", upload.single("aedImage"), async (req, res) => {
       }
     }
 
-    // Parse emergencySupplies if it's a string
-    if (typeof req.body.emergencySupplies === "string") {
-      updateData.emergencySupplies = JSON.parse(req.body.emergencySupplies);
+    // Handle emergencySupplies
+    if (req.body.emergencySupplies) {
+      try {
+        if (typeof req.body.emergencySupplies === "string") {
+          // Try parsing as JSON
+          const parsed = JSON.parse(req.body.emergencySupplies);
+          updateData.emergencySupplies = Array.isArray(parsed) ? parsed : [req.body.emergencySupplies];
+        } else if (Array.isArray(req.body.emergencySupplies)) {
+          updateData.emergencySupplies = req.body.emergencySupplies;
+        } else {
+          updateData.emergencySupplies = [req.body.emergencySupplies];
+        }
+      } catch (error) {
+        // If JSON.parse fails, treat as a single string
+        updateData.emergencySupplies = [req.body.emergencySupplies];
+      }
+    } else {
+      updateData.emergencySupplies = [];
     }
 
     const aed = await AED.findOneAndUpdate(
