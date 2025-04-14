@@ -36,7 +36,7 @@ router.post("/register-aed", upload.single("aedImage"), async (req, res) => {
 });
 
 
-router.put("/:id", protect, upload.single("aedImage"), async (req, res) => {
+router.put("/:id", upload.single("aedImage"), async (req, res) => {
   try {
     let updateData = { ...req.body, aedImage: req.file?.path || req.body.aedImage };
 
