@@ -36,6 +36,41 @@ router.post("/register-aed", upload.single("aedImage"), async (req, res) => {
 });
 
 
+router.put("/:id", protect, upload.single("aedImage"), async (req, res) => {
+  try {
+    let updateData = { ...req.body, aedImage: req.file?.path || req.body.aedImage };
+
+    if (req.body.location) {
+      const location = JSON.parse(req.body.location);
+      if (location.type === "Point" && Array.isArray(location.coordinates)) {
+        updateData.location = location;
+      } else {
+        return res.status(400).json({ message: "❌ Invalid location format" });
+      }
+    }
+
+    // Parse emergencySupplies if it's a string
+    if (typeof req.body.emergencySupplies === "string") {
+      updateData.emergencySupplies = JSON.parse(req.body.emergencySupplies);
+    }
+
+    const aed = await AED.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: false },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!aed) {
+      return res.status(404).json({ message: "❌ AED not found" });
+    }
+
+    res.status(200).json({ message: "✅ AED updated successfully!", aed });
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({ message: "❌ Error updating AED", details: error.message });
+  }
+});
+
 // 🔹 Get All AEDs (No Authentication)
 router.get("/aed-list", async (req, res) => {
   try {
